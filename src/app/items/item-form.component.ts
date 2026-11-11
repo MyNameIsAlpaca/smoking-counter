@@ -132,7 +132,7 @@ export class fumateFormComponent implements OnChanges, OnInit, OnDestroy {
           next: () => {
             this.loading = false;
             this.resetForm();
-            this.success = 'fumate creata correttamente!';
+            this.success = 'Fumata creata correttamente!';
             this.fumateSaved.emit();
             this.refreshDailyTiri.next();
             setTimeout(() => {
