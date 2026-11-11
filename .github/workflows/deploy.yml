@@ -1,0 +1,76 @@
+
+name: Deploy Angular to GitHub Pages
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: github-pages
+  cancel-in-progress: true
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      # 1. Scarica il repository
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # 2. Configura Node.js
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      # 3. Installa le dipendenze
+      - name: Install dependencies
+        run: npm ci
+
+      # 4. Compila Angular per GitHub Pages
+      - name: Build Angular
+        run: |
+          REPO_NAME="${GITHUB_REPOSITORY#*/}"
+          npx ng build --configuration production --base-href "/${REPO_NAME}/"
+
+      # 5. Individua la cartella contenente index.html
+      - name: Prepare deployment
+        run: |
+          INDEX_FILE=$(find dist -type f -name index.html -print -quit)
+
+          if [ -z "$INDEX_FILE" ]; then
+            echo "Errore: index.html non trovato in dist/"
+            exit 1
+          fi
+
+          PUBLISH_DIR=$(dirname "$INDEX_FILE")
+
+          # Fallback per le route Angular
+          cp "$INDEX_FILE" "$PUBLISH_DIR/404.html"
+
+          echo "Cartella da pubblicare: $PUBLISH_DIR"
+          echo "PUBLISH_DIR=$PUBLISH_DIR" >> "$GITHUB_ENV"
+
+      # 6. Carica gli artefatti
+      - name: Upload GitHub Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ${{ env.PUBLISH_DIR }}
+
+      # 7. Pubblica su GitHub Pages
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
