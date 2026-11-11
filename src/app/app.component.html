@@ -1,0 +1,17 @@
+<div class="container">
+  <div *ngIf="loadingfumate" class="card loading">
+    Caricamento della registrazione...
+  </div>
+
+  <div *ngIf="error" class="card error" role="alert">
+    {{ error }}
+  </div>
+
+  <app-item-form
+    *ngIf="!loadingfumate && !error"
+    [fumate]="currentfumate"
+    (fumateSaved)="onfumateSaved()"
+    (fumateCleared)="onfumateCleared()">
+  </app-item-form>
+</div>
+

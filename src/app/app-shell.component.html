@@ -1,0 +1,24 @@
+<header class="container">
+  <div class="card app-header">
+    <div class="app-brand">
+      <a routerLink="/home" class="app-title">Smoking Counter</a>
+    </div>
+
+    <nav *ngIf="currentUser" class="section-nav" aria-label="Navigazione principale">
+      <a routerLink="/home" routerLinkActive="active-section">Home</a>
+      <a routerLink="/censimento" routerLinkActive="active-section">Censimento</a>
+      <a routerLink="/consultazione" routerLinkActive="active-section">Consultazione</a>
+      <button
+        type="button"
+        class="logout-button"
+        (click)="signOut()"
+        [disabled]="loggingOut">
+        {{ loggingOut ? 'Uscita...' : 'Esci' }}
+      </button>
+    </nav>
+
+    <div *ngIf="logoutError" class="error header-error" role="alert">{{ logoutError }}</div>
+  </div>
+</header>
+
+<router-outlet></router-outlet>

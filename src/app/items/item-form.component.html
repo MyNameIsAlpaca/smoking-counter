@@ -1,0 +1,94 @@
+<div class="card">
+  <div class="form-heading">
+    <h2>{{ fumate ? 'Modifica fumate' : 'Aggiungi una fumata' }}</h2>
+    <span *ngIf="dailyTiri !== null" class="daily-counter" aria-live="polite">
+      <span class="status-dot" [ngClass]="'status-' + getDailySmokingStatus(dailyTiri)" aria-hidden="true"></span>
+      <span>{{ dailyTiri }}/80</span>
+      <span class="visually-hidden">tiri nella data selezionata, stato {{ getDailySmokingStatus(dailyTiri) === 'green' ? 'verde' : (getDailySmokingStatus(dailyTiri) === 'yellow' ? 'giallo' : 'rosso') }}</span>
+    </span>
+    <span *ngIf="dailyTiriLoading" class="daily-counter">Caricamento totale...</span>
+  </div>
+
+  <div *ngIf="dailyTiriError" class="error" role="alert">
+    {{ dailyTiriError }}
+  </div>
+  
+  <div *ngIf="error" class="error">
+    {{ error }}
+  </div>
+
+  <div *ngIf="success" class="success">
+    {{ success }}
+  </div>
+
+  <form [formGroup]="fumateForm" (ngSubmit)="onSubmit()">
+    <div class="form-group">
+      <label for="data">Data *</label>
+      <input
+        type="date"
+        id="data"
+        formControlName="data"
+        [class.error-input]="fumateForm.get('data')?.invalid && fumateForm.get('data')?.touched"
+      />
+      <div *ngIf="fumateForm.get('data')?.invalid && fumateForm.get('data')?.touched" class="validation-error">
+        La data è obbligatoria
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="orario">Orario *</label>
+      <input
+        type="time"
+        id="orario"
+        formControlName="orario"
+        [class.error-input]="fumateForm.get('orario')?.invalid && fumateForm.get('orario')?.touched"
+      />
+      <div *ngIf="fumateForm.get('orario')?.invalid && fumateForm.get('orario')?.touched" class="validation-error">
+        L'orario è obbligatorio
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="tiri">Tiri *</label>
+      <input
+        type="number"
+        id="tiri"
+        formControlName="tiri"
+        inputmode="numeric"
+        step="1"
+        min="0"
+        [class.error-input]="fumateForm.get('tiri')?.invalid && fumateForm.get('tiri')?.touched"
+      />
+      <div *ngIf="fumateForm.get('tiri')?.invalid && fumateForm.get('tiri')?.touched" class="validation-error">
+        <div *ngIf="fumateForm.get('tiri')?.errors?.['required']">Il numero di tiri è obbligatorio</div>
+        <div *ngIf="fumateForm.get('tiri')?.errors?.['min']">Il numero di tiri non può essere negativo</div>
+        <div *ngIf="fumateForm.get('tiri')?.errors?.['pattern']">Inserisci un numero intero</div>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="luogo">Luogo *</label>
+      <input
+        type="text"
+        id="luogo"
+        formControlName="luogo"
+        maxlength="255"
+        [class.error-input]="fumateForm.get('luogo')?.invalid && fumateForm.get('luogo')?.touched"
+      />
+      <div *ngIf="fumateForm.get('luogo')?.invalid && fumateForm.get('luogo')?.touched" class="validation-error">
+        <div *ngIf="fumateForm.get('luogo')?.errors?.['required']">Il luogo è obbligatorio</div>
+        <div *ngIf="fumateForm.get('luogo')?.errors?.['maxlength']">Il luogo non può superare 255 caratteri</div>
+      </div>
+    </div>
+
+    <div>
+      <button type="submit" class="btn btn-success" [disabled]="loading">
+        {{ loading ? 'Salvataggio...' : (fumate ? 'Aggiorna' : 'Crea') }}
+      </button>
+      <button type="button" class="btn btn-secondary" (click)="resetForm()" [disabled]="loading">
+        Azzera
+      </button>
+    </div>
+  </form>
+</div>
+

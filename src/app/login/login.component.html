@@ -1,0 +1,52 @@
+<div class="container">
+  <div class="card">
+    <h1>Accedi</h1>
+
+    <div *ngIf="errorMessage" class="error" role="alert">
+      {{ errorMessage }}
+    </div>
+
+    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+      <div class="form-group">
+        <label for="email">Email</label>
+        <input
+          type="email"
+          id="email"
+          formControlName="email"
+          autocomplete="username"
+          [class.error-input]="loginForm.controls.email.invalid && loginForm.controls.email.touched"
+        />
+        <div
+          *ngIf="loginForm.controls.email.touched && loginForm.controls.email.errors?.['required']"
+          class="validation-error">
+          L’email è obbligatoria.
+        </div>
+        <div
+          *ngIf="loginForm.controls.email.touched && loginForm.controls.email.errors?.['email']"
+          class="validation-error">
+          Inserisci un indirizzo email valido.
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input
+          type="password"
+          id="password"
+          formControlName="password"
+          autocomplete="current-password"
+          [class.error-input]="loginForm.controls.password.invalid && loginForm.controls.password.touched"
+        />
+        <div
+          *ngIf="loginForm.controls.password.touched && loginForm.controls.password.errors?.['required']"
+          class="validation-error">
+          La password è obbligatoria.
+        </div>
+      </div>
+
+      <button type="submit" class="btn btn-success" [disabled]="loading">
+        {{ loading ? 'Accesso in corso...' : 'Accedi' }}
+      </button>
+    </form>
+  </div>
+</div>

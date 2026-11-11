@@ -1,0 +1,69 @@
+<main class="container">
+  <div class="card">
+    <h1>Consultazione</h1>
+    <p>Le registrazioni sono raggruppate per giorno.</p>
+  
+    <div *ngIf="error" class="error" role="alert">
+      {{ error }}
+    </div>
+
+    <div *ngIf="loading" class="loading">
+      Caricamento delle registrazioni...
+    </div>
+
+    <div *ngIf="!loading && smoking.length === 0" class="empty-state">
+      <p>Non ci sono ancora registrazioni da consultare.</p>
+      <a routerLink="/censimento">Vai al censimento</a>
+    </div>
+
+    <div *ngIf="!loading && dailyGroups.length > 0" class="day-accordion-list">
+      <details
+        *ngFor="let group of dailyGroups; let dayIndex = index"
+        class="day-accordion"
+        [open]="dayIndex === 0">
+        <summary>
+          <span class="day-title">{{ group.dateLabel }}</span>
+          <span class="day-summary">
+            {{ group.records.length }} registrazioni ·
+            <span class="daily-counter">
+              <span class="status-dot" [ngClass]="'status-' + getDailySmokingStatus(group.totalTiri)" aria-hidden="true"></span>
+              <span>{{ group.totalTiri }}/80</span>
+              <span class="visually-hidden">tiri, stato {{ getDailySmokingStatus(group.totalTiri) === 'green' ? 'verde' : (getDailySmokingStatus(group.totalTiri) === 'yellow' ? 'giallo' : 'rosso') }}</span>
+            </span>
+          </span>
+        </summary>
+
+        <div class="day-content">
+          <table>
+            <thead>
+              <tr>
+                <th>Orario</th>
+                <th>Tiri</th>
+                <th>Luogo</th>
+                <th>Azioni</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let fumate of group.records">
+                <td>{{ fumate.data_inserimento | date:'HH:mm' }}</td>
+                <td>{{ fumate.tiri }}</td>
+                <td>{{ fumate.luogo }}</td>
+                <td>
+                  <div class="actions">
+                    <button class="btn btn-primary" (click)="editfumate(fumate)">
+                      Modifica
+                    </button>
+                    <button class="btn btn-danger" (click)="deletefumate(fumate.id)">
+                      Elimina
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </details>
+    </div>
+  </div>
+</main>
+
