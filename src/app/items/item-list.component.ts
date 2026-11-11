@@ -51,7 +51,7 @@ export class fumateListComponent implements OnInit {
   }
 
   deletefumate(id: number): void {
-    if (confirm('Vuoi davvero eliminare questa fumate?')) {
+    if (confirm('Vuoi davvero eliminare questa fumata?')) {
       this.loading = true;
       this.error = null;
       this.supabaseService.deletefumate(id).subscribe({
